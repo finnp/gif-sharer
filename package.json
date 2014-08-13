@@ -1,0 +1,15 @@
+{
+  "name": "blob-store-example-app",
+  "version": "0.0.0",
+  "description": "Example with using blob store in an app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Finn Pauls",
+  "license": "MIT",
+  "dependencies": {
+    "busboy": "^0.2.8",
+    "fs-blob-store": "^3.0.1"
+  }
+}
