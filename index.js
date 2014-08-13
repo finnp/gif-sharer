@@ -8,14 +8,20 @@ var store = blobs({path: './data'})
 var server = http.createServer(function (req, res) {
   if(req.method === 'POST') {
     // upload picture
+    res.setHeader('Content-Type', 'text/html')
     var form = new Busboy({headers: req.headers})
     var save = store.createWriteStream()
     save.on('finish', function () {
-      res.end('Your file is available at /' + save.hash)
+      res.end('Right click and copy this image url to share it <br> <img src="/' + save.hash +'" alt="gif"/>')
     })
     
-    form.on('file', function (fieldname, file, filename) {
-      file.pipe(save)
+    form.on('file', function (fieldname, file, filename, encoding, mimetype) {
+      if(mimetype === 'image/gif') {
+        file.pipe(save)
+      } else {
+        res.writeHead(406)
+        res.end('Not a GIF File')
+      }
     })
     form.on('finish', function () {
       res.write('Received your file...')
