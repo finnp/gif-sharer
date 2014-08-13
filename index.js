@@ -1,6 +1,7 @@
 var blobs = require('fs-blob-store')
 var Busboy = require('busboy')
 var http = require('http')
+var fs = require('fs')
 
 var store = blobs({path: './data'})
 
@@ -11,7 +12,6 @@ var server = http.createServer(function (req, res) {
     var save = store.createWriteStream()
     save.on('finish', function () {
       res.end('Your file is available at /' + save.hash)
-      console.log('done')
     })
     
     form.on('file', function (fieldname, file, filename) {
@@ -23,11 +23,19 @@ var server = http.createServer(function (req, res) {
     req.pipe(form)
   } else {
     if(req.url === '/') {
-      var form = '<form action="/" enctype="multipart/form-data" method="post"><input type="file" name="datafile"><input type="submit" value="upload"/></form>'
       res.setHeader('Content-Type', 'text/html')
-      res.end(form + '<br>upload your picture')
+      fs.createReadStream('./index.html').pipe(res)
     } else {
-      store.createReadStream({hash: req.url.replace(/\//g, '')}).pipe(res)
+      var blob = {hash: req.url.replace(/\//g, '')}
+      store.exists(blob, function (err, exists) {
+        if(err || !exists) {
+          res.writeHead(404)
+          res.end('file not found')
+        } else {
+          res.setHeader('Content-Type', 'image/gif')
+          store.createReadStream(blob).pipe(res)  
+        }
+      })
     }
   }
 })
