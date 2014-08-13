@@ -1,5 +1,5 @@
 {
-  "name": "blob-store-example-app",
+  "name": "gif-sharer",
   "version": "0.0.0",
   "description": "Example with using blob store in an app",
   "main": "index.js",
